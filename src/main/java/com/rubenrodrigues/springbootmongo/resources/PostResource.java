@@ -1,5 +1,6 @@
 package com.rubenrodrigues.springbootmongo.resources;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,4 +36,15 @@ public class PostResource {
 		return ResponseEntity.ok().body(list);
 	}
 
+	@GetMapping(value = "/fullsearch")
+	public ResponseEntity<List<Post>> fullSearch(
+			@RequestParam(value = "text", defaultValue = "") String text,
+			@RequestParam(value = "minDate", defaultValue = "") String minDate,
+			@RequestParam(value = "maxDate", defaultValue = "") String maxDate){
+		text = URL.decodeParam(text);
+		Instant min = URL.convertInstant(minDate, Instant.EPOCH);
+		Instant max = URL.convertInstant(maxDate, Instant.now());
+		List<Post> list = service.fullSearch(text, min, max);
+		return ResponseEntity.ok().body(list);
+	}
 }

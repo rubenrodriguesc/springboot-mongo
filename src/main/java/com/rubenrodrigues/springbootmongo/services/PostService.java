@@ -1,5 +1,6 @@
 package com.rubenrodrigues.springbootmongo.services;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,11 @@ public class PostService {
 	
 	public List<Post> findByTitle(String text){
 		return repository.findTitle(text);
+	}
+	
+	public List<Post> fullSearch(String text, Instant minDate, Instant maxDate){	
+		maxDate = maxDate.plusSeconds(24*60*60);
+		return repository.fullSearch(text, minDate, maxDate);
 	}
 
 }

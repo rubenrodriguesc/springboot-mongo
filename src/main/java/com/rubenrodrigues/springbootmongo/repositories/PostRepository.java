@@ -1,5 +1,6 @@
 package com.rubenrodrigues.springbootmongo.repositories;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -10,10 +11,16 @@ import com.rubenrodrigues.springbootmongo.domain.Post;
 
 @Repository
 public interface PostRepository extends MongoRepository<Post, String> {
-	
+
 	List<Post> findByTitleContainingIgnoreCase(String text);
-	
+
 	@Query("{ 'title': { $regex: ?0, $options: 'i' } }")
 	List<Post> findTitle(String text);
+
+	@Query(" { $and: [  {instant: {$gte: ?1} },  {instant: {$lte: ?2} } ,"
+			+ " { $or: [ { 'title': { $regex: ?0, $options: 'i' } }, "
+			+ "{ 'body': { $regex: ?0, $options: 'i' } }, "
+			+ "{ 'comments.text': { $regex: ?0, $options: 'i' } } ] } ] }")
+	List<Post> fullSearch(String text, Instant minDate, Instant maxDate);
 
 }
